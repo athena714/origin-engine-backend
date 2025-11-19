@@ -50,33 +50,3 @@
     const riskBadge = document.getElementById('riskBadge');
     const archiveButton = document.getElementById('archiveButton');
     const spinner = document.getElementById('loadingSpinner');
-
-    function setRisk(level) {
-      const levels = ['low', 'medium', 'high'];
-      riskBadge.className = 'badge ' + (levels.includes(level) ? `badge-${level}` : 'badge-neutral');
-      riskBadge.textContent = level === 'low' ? 'Low' : level === 'medium' ? 'Moderate' : level === 'high' ? 'High' : 'Pending';
-    }
-
-    function openArchive(tab) {
-      if (!tab?.url) return;
-      const archiveUrl = `https://archive.today/?run=1&url=${encodeURIComponent(tab.url)}`;
-      chrome.tabs.create({ url: archiveUrl });
-    }
-
-    archiveButton.addEventListener('click', () => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        openArchive(tabs[0]);
-      });
-    });
-
-    // Placeholder initialization; in a real flow these would be populated after analysis.
-    spinner.classList.add('visible');
-    setTimeout(() => {
-      spinner.classList.remove('visible');
-      setRisk('medium');
-      document.getElementById('createdDate').textContent = '2014-08-17';
-      document.getElementById('owner').textContent = 'Example Registrar, LLC';
-    }, 800);
-  </script>
-</body>
-</html>
