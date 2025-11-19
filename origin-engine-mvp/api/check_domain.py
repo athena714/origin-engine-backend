@@ -39,6 +39,11 @@ You must return ONLY a raw JSON object. No markdown formatting, no code blocks.
 
 
 class handler(BaseHTTPRequestHandler):
+  def do_OPTIONS(self):
+        # Handle CORS preflight requests
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+    
     def do_GET(self):
         parsed_url = urlparse(self.path)
         params = parse_qs(parsed_url.query)
