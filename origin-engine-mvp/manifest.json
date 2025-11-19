@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "The Origin Engine - Vetting Tool",
+  "description": "Quickly vet the current page with a streamlined popup workflow.",
+  "version": "1.0.0",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "The Origin Engine - Vetting Tool"
+  }
+}
