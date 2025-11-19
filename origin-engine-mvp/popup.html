@@ -1,40 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Domain Risk Overview</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Origin Engine</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="panel">
-    <header class="header">
-      <div class="brand">
-        <span class="eyebrow">Investigative Toolkit</span>
-        <h1>Domain Risk</h1>
-      </div>
-      <span id="riskBadge" class="badge badge-neutral" aria-live="polite">Pending</span>
-    </header>
+  <div class="container">
+    <div class="header">
+      <span class="logo-icon">🔍</span>
+      <h1>Origin Engine</h1>
+    </div>
 
-    <section class="intelligence" aria-labelledby="intelligence-title">
-      <div class="section-heading">
-        <h2 id="intelligence-title">Domain Intelligence</h2>
-        <div class="spinner" id="loadingSpinner" role="status" aria-live="polite" aria-label="Loading"></div>
+    <div class="card">
+      <div class="risk-header">
+        <div id="risk-score" class="badge badge-loading">ANALYZING</div>
+        <div id="risk-label" class="risk-text">Please wait...</div>
       </div>
-      <dl class="fact-grid">
-        <div class="fact">
-          <dt>Created Date</dt>
-          <dd id="createdDate">—</dd>
-        </div>
-        <div class="fact">
-          <dt>Owner</dt>
-          <dd id="owner">—</dd>
-        </div>
-      </dl>
-    </section>
+      
+      <div class="meta-row">
+        <span class="label">DOMAIN:</span>
+        <span id="domain" class="value">...</span>
+      </div>
+      
+      <div class="meta-row">
+        <span class="label">AGE/FLAGS:</span>
+        <span id="domain-age" class="value">...</span>
+      </div>
+    </div>
 
-    <button id="archiveButton" class="action">Check Archives</button>
-  </main>
+    <div class="actions">
+      <button id="check-archives" class="btn-secondary">
+        🏛 Check Archives
+      </button>
+    </div>
+    
+    <div id="status" class="status-bar">Ready</div>
+    
+    <div id="spinner" class="spinner-overlay" style="display: none;">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>  </main>
 
   <script>
     const riskBadge = document.getElementById('riskBadge');

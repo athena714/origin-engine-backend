@@ -1,4 +1,5 @@
-const API_ENDPOINT = 'https://my-app.vercel.app/api/check_domain';
+// CHANGE 1: The New "Brain" URL (Your Vercel Test Link)
+const API_ENDPOINT = 'https://vercel-origin-engine-git-codex-b05352-athenas-projects-dce7331d.vercel.app/api/check_domain';
 
 const ui = {
   urlText: document.getElementById('url'),
@@ -21,7 +22,6 @@ const getActiveTabUrl = () =>
           reject(chrome.runtime.lastError);
           return;
         }
-
         const tab = tabs && tabs[0];
         resolve(tab?.url || '');
       });
@@ -41,22 +41,46 @@ const setStatus = (text) => {
   }
 };
 
-const setRisk = (months) => {
+// CHANGE 2: New Logic to handle the AI's response
+const setRisk = (data) => {
   if (!ui.riskBadge || !ui.riskLabel) return;
 
-  const isValid = Number.isFinite(months);
-  const monthsValue = isValid ? months : null;
+  // Default values
+  let label = 'UNKNOWN';
+  let color = '#888'; // Gray
+  let summary = 'Analysis failed';
 
-  const risk = (() => {
-    if (monthsValue === null) return { label: 'Unknown', color: '#888' };
-    if (monthsValue < 6) return { label: 'HIGH RISK', color: '#e64b3c' };
-    if (monthsValue < 12) return { label: 'CAUTION', color: '#f3c623' };
-    return { label: 'LOW RISK', color: '#3cb878' };
-  })();
+  if (data) {
+    // Use the AI's "risk_level" directly
+    const level = data.risk_level ? data.risk_level.toUpperCase() : 'UNKNOWN';
+    
+    if (level === 'HIGH' || level === 'CRITICAL') {
+        label = 'HIGH RISK';
+        color = '#e64b3c'; // Red
+    } else if (level === 'MEDIUM') {
+        label = 'CAUTION';
+        color = '#f3c623'; // Yellow
+    } else if (level === 'LOW') {
+        label = 'SAFE';
+        color = '#3cb878'; // Green
+    }
 
-  ui.riskBadge.textContent = risk.label;
-  ui.riskBadge.style.backgroundColor = risk.color;
-  ui.riskLabel.textContent = isValid ? `${monthsValue.toFixed(0)} months old` : 'No age data';
+    // Use the AI's written summary
+    summary = data.summary || "No summary provided";
+  }
+
+  // Update the Badge (The Colored Box)
+  ui.riskBadge.textContent = label;
+  ui.riskBadge.style.backgroundColor = color;
+  
+  // Update the text next to it (The AI's Explanation)
+  ui.riskLabel.textContent = summary;
+  
+  // If the UI has a separate text for age/red flags, update that too
+  if (ui.domainAgeText && data.red_flags) {
+      // Join the red flags into a clean list
+      ui.domainAgeText.textContent = data.red_flags.join(", ") || "No flags detected";
+  }
 };
 
 const updateArchiveButton = () => {
@@ -71,19 +95,22 @@ const updateArchiveButton = () => {
 
 const populateData = (data) => {
   if (ui.urlText) ui.urlText.textContent = currentUrl;
-  if (ui.domainText && data?.domain) ui.domainText.textContent = data.domain;
-  if (ui.domainAgeText && Number.isFinite(data?.domainAgeMonths)) {
-    ui.domainAgeText.textContent = `${data.domainAgeMonths.toFixed(1)} months`;
-  } else if (ui.domainAgeText) {
-    ui.domainAgeText.textContent = 'Unknown';
+  
+  // Try to extract domain name from URL for display
+  try {
+      const hostname = new URL(currentUrl).hostname;
+      if (ui.domainText) ui.domainText.textContent = hostname;
+  } catch (e) {
+      if (ui.domainText) ui.domainText.textContent = "Unknown Domain";
   }
 
-  setRisk(data?.domainAgeMonths);
+  // Pass the full AI data to the risk function
+  setRisk(data);
 };
 
 const fetchDomainData = async () => {
   setSpinnerVisible(true);
-  setStatus('Checking domain...');
+  setStatus('AI Agent is analyzing...');
 
   try {
     currentUrl = await getActiveTabUrl();
@@ -100,11 +127,17 @@ const fetchDomainData = async () => {
     }
 
     const data = await response.json();
+    
+    // Check if the backend sent an error (like missing params)
+    if (data.error) {
+        throw new Error(data.error);
+    }
+
     populateData(data);
-    setStatus('Check complete');
+    setStatus('Analysis Complete');
   } catch (error) {
     console.error('Error checking domain:', error);
-    setStatus('Unable to check domain');
+    setStatus('Error: ' + error.message);
     setRisk(null);
   } finally {
     setSpinnerVisible(false);
