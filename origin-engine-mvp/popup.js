@@ -1,5 +1,5 @@
 // TODO: WE WILL UPDATE THIS URL IN STEP 2
-const API_ENDPOINT = 'https://vercel-origin-engine.vercel.app/api/check_domain';
+const API_ENDPOINT = 'https://vercel-origin-engine-bk5nb0h5o-athenas-projects-dce7331d.vercel.app';
 
 const ui = {
   urlText: document.getElementById('url'),
