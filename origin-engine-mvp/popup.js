@@ -1,5 +1,5 @@
 // This is the URL for your Vercel backend
-const API_ENDPOINT = 'https://vercel-origin-engine-q9swd3rn1-athenas-projects-dce7331d.vercel.app';
+const API_ENDPOINT = 'https://vercel-origin-engine-q9swd3rn1-athenas-projects-dce7331d.vercel.app/api/check_domain';
 
 const ui = {
   urlText: document.getElementById('url'),
