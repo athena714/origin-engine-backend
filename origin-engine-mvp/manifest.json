@@ -1,14 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "The Origin Engine - Vetting Tool",
-  "description": "Quickly vet the current page with a streamlined popup workflow.",
+  "name": "Deep Dive: Substack Switcher",
+  "description": "Quickly switch between Substack content directly from the popup.",
   "version": "1.0.0",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "The Origin Engine - Vetting Tool"
+    "default_title": "Deep Dive: Substack Switcher"
   }
 }
